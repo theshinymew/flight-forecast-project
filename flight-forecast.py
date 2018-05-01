@@ -30,15 +30,15 @@ for i in range(len(flight_gates)):
         flight = flight_hour.strftime("%I%p")
         flights.append(flight)
 
+#
 schedule = Counter(flights)
 
-print schedule
-
+for key, value in schedule.items():
+    print(key, value)
+    
+#Graph the results
 plt.bar(schedule.keys(),
-        schedule.values(),
-        1,
-        align = 'edge')
-
+        schedule.values())
 plt.xlabel("Time of flight")
 plt.ylabel("Number of flights")
 plt.title("Flights by hour")
