@@ -1,11 +1,13 @@
+import sys
 from lxml import html
 import requests
 from collections import Counter
 from matplotlib import pyplot as plt
-import pandas
+from datetime import datetime
 
-#use requests.get to retrieve the web page with our data, parse it using the html module and save the results in tree:
-page = requests.get("https://www.arrowcast.net/fids/mco/fids.asp?airline=&number=&city=&start=360&end=1410&limit=&search=Search&sort=%40actual&sortorder=asc&adi=D&hidFlightTotal=0")
+#use requests.get to retrieve the web page with our data, parse it using the html module and save the results in tree
+#command line arguments are used in the url so that start and end time can be specified when running the script
+page = requests.get("https://www.arrowcast.net/fids/mco/fids.asp?airline=&number=&city=&start=" + sys.argv[1] + "&end=" + sys.argv[2] + "&limit=&search=Search&sort=%40actual&sortorder=asc&adi=D&hidFlightTotal=0")
 tree = html.fromstring(page.content)
 
 #use xpath function with query to retrieve the flights' time of departure and gate
@@ -20,18 +22,24 @@ for gate_number in depart_gates:
     flight_gates.append(gate_number)
     
 #keep only the flight times for gates 100+, which is the terminal where i work
-#we only need the date and hour so we'll trim the minutes
+#we only need the date and hour so we'll trim the minutes (format is ddd hh:mm) and format as hhxm
 flights = []
 for i in range(len(flight_gates)):
     if flight_gates[i] > 99:
-        flights.append(depart_times[i][:7])                
+        flight_hour = datetime.strptime(depart_times[i][5:7], "%H")
+        flight = flight_hour.strftime("%I%p")
+        flights.append(flight)
 
 schedule = Counter(flights)
 
-#df = pandas.DataFrame.from_dict(schedule, orient='index')
-#df.plot(kind='bar')
+print schedule
 
-#plt.plot(schedule.keys(), schedule.values(), linestyle = 'solid', marker = 'o')
-#plt.xlabel("Time")
-#plt.ylabel("Flights")
-#plt.title("Flight forecast")
+plt.bar(schedule.keys(),
+        schedule.values(),
+        1,
+        align = 'edge')
+
+plt.xlabel("Time of flight")
+plt.ylabel("Number of flights")
+plt.title("Flights by hour")
+plt.show()
