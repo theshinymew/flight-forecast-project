@@ -2,6 +2,7 @@ from lxml import html
 import requests
 from collections import Counter
 from matplotlib import pyplot as plt
+import pandas
 
 #use requests.get to retrieve the web page with our data, parse it using the html module and save the results in tree:
 page = requests.get("https://www.arrowcast.net/fids/mco/fids.asp?airline=&number=&city=&start=360&end=1410&limit=&search=Search&sort=%40actual&sortorder=asc&adi=D&hidFlightTotal=0")
@@ -19,15 +20,18 @@ for gate_number in depart_gates:
     flight_gates.append(gate_number)
     
 #keep only the flight times for gates 100+, which is the terminal where i work
-#we only need the hours so we'll trim the rest
+#we only need the date and hour so we'll trim the minutes
 flights = []
 for i in range(len(flight_gates)):
     if flight_gates[i] > 99:
-        flights.append(int(depart_times[i][5:7]))
-                
+        flights.append(depart_times[i][:7])                
+
 schedule = Counter(flights)
 
-plt.plot(schedule.keys(), schedule.values(), linestyle = 'solid', marker = 'o')
-plt.xlabel("Time")
-plt.ylabel("Flights")
-plt.title("Flight forecast")
+#df = pandas.DataFrame.from_dict(schedule, orient='index')
+#df.plot(kind='bar')
+
+#plt.plot(schedule.keys(), schedule.values(), linestyle = 'solid', marker = 'o')
+#plt.xlabel("Time")
+#plt.ylabel("Flights")
+#plt.title("Flight forecast")
