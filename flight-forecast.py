@@ -30,15 +30,34 @@ for i in range(len(flight_gates)):
         flight = flight_hour.strftime("%I%p")
         flights.append(flight)
 
-#
-schedule = Counter(flights)
+#calculate and store the amount of flights by hour
+flightTally = Counter(flights)
 
-for key, value in schedule.items():
-    print(key, value)
+#TODO fix function so that it produces two separate lists, and use amhours and pmhours as labels instead
+#ugh
+def makeSchedule(counter, time):
+    """this is the moment where i give up and end up hardcoding the amount of 
+    hours in a day so that i can keep the relevant order when printing out the 
+    schedule and ensuring the line graph plots correctly"""
+    sortedschedule = []
     
-#Graph the results
-plt.bar(schedule.keys(),
-        schedule.values())
+    amhours = ["05AM", "06AM", "07AM", "08AM", "09AM", "10AM", "11AM", "12PM", "01PM"]
+    pmhours = ["01PM", "02PM", "03PM", "04PM", "05PM", "06PM", "07PM", "08PM", "09PM", "10PM", "11PM", "12AM", "01AM"]
+    
+    if time == "300":
+        for h in amhours:
+            sortedschedule.append((h, counter.get(h, 0)))
+    else:
+        for h in pmhours:
+            sortedschedule.append((h, counter.get(h, 0)))
+             
+    return sortedschedule
+
+schedule = makeSchedule(flightTally, sys.argv[1])
+print schedule
+
+#Graph the results4
+plt.plot(*zip(*schedule))
 plt.xlabel("Time of flight")
 plt.ylabel("Number of flights")
 plt.title("Flights by hour")
