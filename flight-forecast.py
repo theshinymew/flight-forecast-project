@@ -2,7 +2,6 @@ import sys
 from lxml import html
 import requests
 from matplotlib import pyplot as plt
-import numpy as np
 
 #use requests.get to retrieve the web page with our data, parse it using the html module and save the results in tree
 #command line arguments are used in the url so that start and end time can be specified when running the script

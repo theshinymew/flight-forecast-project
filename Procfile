@@ -1,1 +1,1 @@
-web: python flight-forecast.py
+web: python homepage.py
