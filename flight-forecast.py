@@ -1,9 +1,9 @@
 import sys
 from lxml import html
 import requests
-from matplotlib import pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
+from matplotlib import pyplot as plt
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import urlparse
