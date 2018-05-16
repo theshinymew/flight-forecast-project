@@ -74,14 +74,14 @@ dbCur = dbConn.cursor(cursor_factory=RealDictCursor)
 
 #drafting the body of the email
 body = ("Hi, \ncnlbot here bringing you today's list of flights from " +
-        labels[1] + " to " + labels[-1] + ": \n" +
-        flights + 
+        labels[0] + " to " + labels[-1] + ": \n\n" +
+        str(flights) + 
         "\n\n")
 
 #extracting all email addresses from database
 rows = []
 try:
-    dbCur.execute("select * from webcheckerdb" )	#Get all records from database
+    dbCur.execute("select * from flightforecastemailsdb" )	#Get all records from database
     rows = dbCur.fetchall()
 except:
     print ("error during select: " + str(traceback.format_exc()))

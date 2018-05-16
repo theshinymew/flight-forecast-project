@@ -16,11 +16,11 @@ def sendemail(recipient, emailSubject, body):
     encoded = base64.b64encode(data).decode()
 
     attachment = Attachment()
-    attachment.set_content(encoded)
-    attachment.set_type("image/png")
-    attachment.set_filename("graph.png")
-    attachment.set_disposition("attachment")
-    attachment.set_content_id(number)
+    attachment.content = encoded
+    attachment.type = "image/png"
+    attachment.filename = "graph.png"
+    attachment.disposition = "attachment"
+    attachment.content_id = "PNG Image file"
     
     mail = Mail(from_email, emailSubject, to_email, content)
     mail.add_attachment(attachment)
