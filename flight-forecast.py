@@ -2,6 +2,8 @@ import sys
 from lxml import html
 import requests
 from matplotlib import pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import urlparse
@@ -41,13 +43,13 @@ flight_gates = []
 for gate_number in depart_gates:
     gate_number = int(gate_number) if gate_number else 0
     flight_gates.append(gate_number)
-    
+
 #keep only the flight times for gates 100+, which is the terminal where i work
 #we only need the date and hour so we'll trim the minutes ddd hh:mm
 current_day = depart_times[0][:3]                   #store current day which should be the
                                                     #first three letters of the time at the
                                                     #begining of the list
-                                            
+
 #calculate and store the amount of flights by hour but only for gates 100+
 for i in range(len(flight_gates)):
     if flight_gates[i] > 99:
@@ -75,7 +77,7 @@ dbCur = dbConn.cursor(cursor_factory=RealDictCursor)
 #drafting the body of the email
 body = ("Hi, \ncnlbot here bringing you today's list of flights from " +
         labels[0] + " to " + labels[-1] + ": \n\n" +
-        str(flights) + 
+        str(flights) +
         "\n\n")
 
 #extracting all email addresses from database
@@ -90,47 +92,3 @@ except:
 for address in rows:
     pprint.pprint(address)
     sendmail.sendemail(address['emailaddress'], "Today's list of flights", body)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
