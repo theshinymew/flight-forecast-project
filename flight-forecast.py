@@ -2,6 +2,13 @@ import sys
 from lxml import html
 import requests
 from matplotlib import pyplot as plt
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import urlparse
+import pprint
+import os
+import traceback
+import sendmail #import email subroutine
 
 #use requests.get to retrieve the web page with our data, parse it using the html module and save the results in tree
 #command line arguments are used in the url so that start and end time can be specified when running the script
@@ -58,3 +65,72 @@ plt.title("Flights by hour")
 plt.xticks(flights.keys(), labels, rotation = 45)
 #plt.show()
 plt.savefig(__file__+".png", dpi = 800)
+
+#code to access the database where all email addresses are stored
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
+dbConn = psycopg2.connect( database=url.path[1:], user=url.username, password=url.password, host=url.hostname, port=url.port)
+dbCur = dbConn.cursor(cursor_factory=RealDictCursor)
+
+#drafting the body of the email
+body = ("Hi, \ncnlbot here bringing you today's list of flights from " +
+        labels[1] + " to " + labels[-1] + ": \n" +
+        flights + 
+        "\n\n")
+
+#extracting all email addresses from database
+rows = []
+try:
+    dbCur.execute("select * from webcheckerdb" )	#Get all records from database
+    rows = dbCur.fetchall()
+except:
+    print ("error during select: " + str(traceback.format_exc()))
+
+#sending email to all addresses
+for address in rows:
+    pprint.pprint(address)
+    sendmail.sendemail(address['emailaddress'], "Today's list of flights", body)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
